@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>Anime Pulse · Tracker</title>
+    <meta name="theme-color" content="#0f0f1a" />
+    <meta name="description" content="Anime tracker modern dengan PWA" />
+ <link rel="manifest" href="manifest.json" /> -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Poppins:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- ===== HEADER ===== -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo">
+          <i class="fas fa-bolt" style="color: #e94560"></i>
+          <span>Anime<span style="color: #e94560">Pulse</span></span>
+        </div>
+        <div class="header-stats">
+          <span class="stat-chip"
+            ><i class="fas fa-film"></i> <span id="totalCount">0</span></span
+          >
+          <span class="stat-chip"
+            ><i class="fas fa-play-circle"></i>
+            <span id="ongoingCount">0</span></span
+          >
+          <span class="stat-chip"
+            ><i class="fas fa-check-circle"></i>
+            <span id="completedCount">0</span></span
+          >
+          <span class="stat-chip"
+            ><i class="fas fa-clock"></i> <span id="plannedCount">0</span></span
+          >
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="search-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Cari anime, genre, karakter..."
+          />
+        </div>
+        <button id="openAddAnimeModal" class="btn-primary">
+          <i class="fas fa-plus-circle"></i> Tambah
+        </button>
+        <button id="showStatsBtn" class="btn-icon" title="Statistik">
+          <i class="fas fa-chart-bar"></i>
+        </button>
+        <button id="backupDataBtn" class="btn-icon" title="Backup">
+          <i class="fas fa-download"></i>
+        </button>
+        <button id="importDataBtn" class="btn-icon" title="Impor">
+          <i class="fas fa-upload"></i>
+        </button>
+        <input
+          type="file"
+          id="importDataInput"
+          accept=".json"
+          style="display: none"
+        />
+        <button id="toggleCrudBtn" class="btn-icon" title="Data Anime">
+          <i class="fas fa-table"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== HERO / DASHBOARD dengan WilApps ===== -->
+    <section class="hero-section" id="heroSection">
+      <div class="hero-card">
+        <div class="hero-greeting">
+          <span class="greeting">👋 Selamat datang,</span>
+          <span class="username" id="userNameDisplay">Pencari Anime</span>
+          <span class="user-badge">WilApps</span>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-block">
+            <span class="stat-number" id="totalCountHero">0</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-number" id="ongoingCountHero">0</span>
+            <span class="stat-label">Sedang</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-number" id="completedCountHero">0</span>
+            <span class="stat-label">Selesai</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-number" id="plannedCountHero">0</span>
+            <span class="stat-label">Rencana</span>
+          </div>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-item">
+            <i class="fas fa-eye"></i> <span id="watchedCount">0</span> episode
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-clock"></i> <span id="watchedTime">0 jam</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-star" style="color: #f4d03f"></i>
+            <span id="avgRating">-</span>
+          </div>
+          <div class="meta-item completion">
+            <span>Progress</span>
+            <div class="ring-progress">
+              <svg viewBox="0 0 36 36" class="ring-svg">
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#2a2a3e"
+                  stroke-width="3"
+                />
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#e94560"
+                  stroke-width="3"
+                  stroke-dasharray="100 100"
+                  stroke-dashoffset="100"
+                  id="progressRing"
+                />
+              </svg>
+              <span class="ring-label" id="completionPercent">0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button id="continueWatchBtn" class="btn-accent">
+            <i class="fas fa-play"></i> Lanjut Nonton
+          </button>
+          <button id="showAllReleaseBtn" class="btn-outline">
+            <i class="fas fa-calendar-alt"></i> Semua Jadwal
+          </button>
+          <button id="weeklyCalendarBtn" class="btn-outline">
+            <i class="fas fa-calendar-week"></i> Kalender Minggu
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB NAVIGATION ===== -->
+    <nav class="tab-nav" id="tabNav">
+      <button class="tab-btn active-filter" data-filter="All">
+        <span>Semua</span><span class="badge" id="badgeAll">0</span>
+      </button>
+      <button class="tab-btn" data-filter="On Going">
+        <span>Sedang</span
+        ><span class="badge ongoing" id="badgeOngoing">0</span>
+      </button>
+      <button class="tab-btn" data-filter="Completed">
+        <span>Selesai</span
+        ><span class="badge completed" id="badgeCompleted">0</span>
+      </button>
+      <button class="tab-btn" data-filter="Plan to Watch">
+        <span>Rencana</span
+        ><span class="badge planned" id="badgePlanned">0</span>
+      </button>
+      <button class="tab-btn" data-filter="Dropped">
+        <span>Drop</span><span class="badge dropped" id="badgeDropped">0</span>
+      </button>
+      <div class="tab-actions">
+        <div class="view-toggle">
+          <button id="gridViewBtn" class="active-view" title="Grid">
+            <i class="fas fa-th-large"></i>
+          </button>
+          <button id="listViewBtn" title="List">
+            <i class="fas fa-list"></i>
+          </button>
+        </div>
+        <select id="sortOption">
+  <option value="newest" selected>Terbaru</option>
+  <option value="oldest">Terlama</option>
+  <option value="rating-desc">⭐ Tertinggi</option>
+  <option value="rating-asc">⭐ Terendah</option>
+  <option value="title-asc">A–Z</option>
+  <option value="title-desc">Z–A</option>
+  <option value="progress">Progress</option>
+</select>
+      </div>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main>
+      <div class="anime-list" id="animeList"></div>
+
+      <!-- ===== PAGINATION ===== -->
+      <div class="pagination-container" id="paginationContainer">
+        <button id="prevPageBtn" class="pagination-btn" disabled>
+          <i class="fas fa-chevron-left"></i> Sebelumnya
+        </button>
+        <div class="pagination-info">
+          <span id="pageInfo">Halaman 1 dari 1</span>
+          <span id="totalFranchiseInfo">Total 0 Franchise</span>
+        </div>
+        <button id="nextPageBtn" class="pagination-btn">
+          Selanjutnya <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </main>
+
+    <!-- ===== CRUD WILAPPS (TABLE DATA) ===== -->
+    <section id="crudSection" style="display: none">
+      <div class="crud-container">
+        <div class="crud-header">
+          <h2><i class="fas fa-table"></i> WilApps · Data Anime</h2>
+          <div class="crud-actions">
+            <div class="crud-search">
+              <i class="fas fa-search"></i>
+              <input
+                type="text"
+                id="crudSearchInput"
+                placeholder="Cari di tabel..."
+              />
+            </div>
+            <button id="crudRefreshBtn" class="btn-secondary">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+            <button id="crudExportBtn" class="btn-secondary">
+              <i class="fas fa-file-export"></i> Export
+            </button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="crud-table" id="crudTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cover</th>
+                <th>Judul</th>
+                <th>Franchise</th>
+                <th>Status</th>
+                <th>Progress</th>
+                <th>Rating</th>
+                <th>Rilis</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="crudTableBody">
+              <tr>
+                <td colspan="9" class="text-center">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="crud-footer">
+          <span id="crudTableInfo">Menampilkan 0 dari 0 anime</span>
+          <div class="crud-pagination">
+            <button id="crudPrevPage" class="pagination-btn-sm" disabled>
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <span id="crudPageInfo">Halaman 1</span>
+            <button id="crudNextPage" class="pagination-btn-sm">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== EXTRA SECTIONS ===== -->
+    <section id="todayReleaseSection" style="display: none"></section>
+    <section id="allFavoriteCharactersSection" style="display: none"></section>
+    <section id="gallerySection" style="display: none"></section>
+    <section id="allReleaseSection" style="display: none"></section>
+    <section id="weeklyCalendarSection" style="display: none"></section>
+
+    <!-- ===== STATS SECTION ===== -->
+    <section id="statsSection" style="display: none">
+      <div class="stats-container">
+        <h2 class="section-title">📊 Statistik</h2>
+        <div class="chart-container">
+          <canvas id="statusChart"></canvas>
+        </div>
+        <div class="stat-item">
+          <h3>🏷️ Genre Populer</h3>
+          <ul id="genreStats" class="genre-list"></ul>
+        </div>
+        <div class="stat-item">
+          <h3>💾 Storage</h3>
+          <p id="storageUsage">Loading...</p>
+          <div class="progress-bar">
+            <div
+              id="storageProgress"
+              class="progress-fill"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== MODAL TAMBAH/EDIT ===== -->
+    <div id="animeModal" class="modal">
+      <div class="modal-content">
+        <button class="close-button" id="closeModalBtn">&times;</button>
+        <h2 id="modalTitle">Tambah Anime</h2>
+        <form id="animeForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Judul</label><input type="text" id="title" required />
+            </div>
+            <div class="form-group">
+              <label>Franchise</label>
+              <input type="text" id="franchise" placeholder="Naruto" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tipe Video</label>
+              <select id="videoType">
+                <option value="TV">TV</option>
+                <option value="OVA">OVA</option>
+                <option value="ONA">ONA</option>
+                <option value="Movie">Movie</option>
+                <option value="Special">Special</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Hari Rilis</label>
+              <select id="releaseDay">
+                <option value="">-- Pilih --</option>
+                <option>Minggu</option>
+                <option>Senin</option>
+                <option>Selasa</option>
+                <option>Rabu</option>
+                <option>Kamis</option>
+                <option>Jumat</option>
+                <option>Sabtu</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Gambar Sampul</label>
+            <input type="file" id="imageUpload" accept="image/*" />
+            <img
+              id="currentImagePreview"
+              style="display: none; max-width: 100px; margin-top: 8px"
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Total Episode</label>
+              <input type="number" id="totalEpisodes" min="1" value="1" />
+            </div>
+            <div class="form-group">
+              <label>Durasi (menit)</label>
+              <input type="number" id="durationPerEpisode" min="1" value="24" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Genre</label>
+            <textarea
+              id="description"
+              rows="2"
+              placeholder="Action, Comedy, …"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>Themes</label>
+            <textarea
+              id="notes"
+              rows="2"
+              placeholder="Mecha, School, …"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>Tag</label>
+            <input type="text" id="tags" placeholder="Favorit, Rewatch" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Status</label>
+              <select id="status">
+                <option value="On Going">Sedang Ditonton</option>
+                <option value="Completed">Selesai</option>
+                <option value="Plan to Watch">Akan Ditonton</option>
+                <option value="Dropped">Drop</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Rating (1–10)</label>
+              <input type="number" id="rating" min="1" max="10" value="7" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tanggal Rilis</label><input type="date" id="releaseDate" />
+            </div>
+            <div class="form-group">
+              <label>Mulai Ditonton</label><input type="date" id="startDate" />
+            </div>
+            <div class="form-group">
+              <label>Selesai</label><input type="date" id="endDate" />
+            </div>
+          </div>
+
+          <h3
+            style="
+              font-size: 0.9rem;
+              color: var(--text-secondary);
+              margin: 16px 0 8px;
+            "
+          >
+            Karakter Favorit
+          </h3>
+          <div class="character-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nama</label><input type="text" id="charName" />
+              </div>
+              <div class="form-group">
+                <label>Jenis Kelamin</label>
+                <select id="charGender">
+                  <option value="">Pilih</option>
+                  <option value="Male">Pria</option>
+                  <option value="Female">Wanita</option>
+                  <option value="Other">Lainnya</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Tanggal Lahir</label>
+                <input type="date" id="charBirthday" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Gambar Karakter</label>
+              <input type="file" id="charImageUpload" accept="image/*" />
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap">
+              <button type="button" id="addCharacterBtn" class="btn-secondary">
+                Tambah Karakter
+              </button>
+              <button
+                type="button"
+                id="fillFromFranchiseBtn"
+                class="btn-outline"
+              >
+                Ambil dari Franchise
+              </button>
+            </div>
+          </div>
+          <div id="favoriteCharactersList" class="char-list-preview"></div>
+
+          <div class="modal-actions">
+            <button type="submit" id="submitAnimeButton" class="btn-primary">
+              Tambah
+            </button>
+            <button
+              type="button"
+              id="updateAnimeButton"
+              class="btn-primary"
+              style="display: none"
+            >
+              Update
+            </button>
+            <button type="button" id="cancelModal" class="btn-secondary">
+              Batal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ===== MODAL DETAIL ===== -->
+    <div id="animeDetailModal" class="modal">
+      <div class="modal-content detail-modal">
+        <button class="close-button" id="closeDetailModalBtn">&times;</button>
+        <div class="detail-layout">
+          <div class="detail-cover">
+            <img id="detailImage" src="" alt="Cover" />
+            <div class="detail-status-badge" id="detailStatusBadge"></div>
+          </div>
+          <div class="detail-info">
+            <h2 id="detailTitle"></h2>
+            <div class="detail-meta">
+              <span
+                ><i class="fas fa-star" style="color: #f4d03f"></i>
+                <span id="detailRating">-</span>/10</span
+              >
+              <span
+                ><i class="fas fa-film"></i>
+                <span id="detailTotalEpisodes">0</span> eps</span
+              >
+              <span
+                ><i class="fas fa-clock"></i>
+                <span id="detailDuration">24</span> menit</span
+              >
+            </div>
+            <p><strong>Status:</strong> <span id="detailStatus"></span></p>
+            <p>
+              <strong>Rilis:</strong>
+              <span id="detailReleaseDate">-</span> &nbsp;
+              <strong>Mulai:</strong> <span id="detailStartDate">-</span> &nbsp;
+              <strong>Selesai:</strong> <span id="detailEndDate">-</span>
+            </p>
+            <div class="detail-genre">
+              <strong>Genre:</strong> <span id="detailDescription">-</span>
+            </div>
+            <div class="detail-theme">
+              <strong>Themes:</strong> <span id="detailNotes">-</span>
+            </div>
+            <div class="detail-progress">
+              <span>Progress: <span id="detailProgressText">0/0</span></span>
+              <div class="progress-bar-container">
+                <div
+                  class="progress-bar-fill"
+                  id="detailProgressFill"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+            <button
+              id="watchEpisodeBtn"
+              class="btn-accent"
+              style="width: 100%; margin-top: 12px"
+            >
+              <i class="fas fa-play"></i> Tonton Episode Berikutnya
+            </button>
+            <div class="detail-characters">
+              <h4>Karakter Favorit</h4>
+              <div id="detailCharactersList" class="char-grid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div id="toastContainer"></div>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div id="lightboxOverlay" style="display: none">
+      <button
+        id="closeLightboxBtn"
+        class="btn-secondary"
+        style="position: absolute; top: 20px; right: 20px"
+      >
+        &times;
+      </button>
+      <button
+        id="prevSlideBtn"
+        class="btn-secondary"
+        style="
+          position: absolute;
+          left: 30px;
+          top: 50%;
+          transform: translateY(-50%);
+        "
+      >
+        &#10094;
+      </button>
+      <img
+        id="lightboxImage"
+        src=""
+        alt="Preview"
+        style="max-width: 90%; max-height: 90%; border-radius: 12px"
+      />
+      <button
+        id="nextSlideBtn"
+        class="btn-secondary"
+        style="
+          position: absolute;
+          right: 30px;
+          top: 50%;
+          transform: translateY(-50%);
+        "
+      >
+        &#10095;
+      </button>
+      <div
+        style="
+          position: absolute;
+          bottom: 30px;
+          width: 100%;
+          text-align: center;
+        "
+      >
+        <button id="zoomInBtn" class="btn-small">🔍 Zoom In</button>
+        <button id="zoomOutBtn" class="btn-small">🔍 Zoom Out</button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
